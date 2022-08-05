@@ -87,15 +87,15 @@ public class Cuenta {
 		this.decremento(monto);
 	}
 
-	public void transferencia(Cuenta otraCuenta, double monto) {
-		this.decremento(monto);
+	public void transferencia(Cuenta otraCuenta, double monto) throws IngresoNegativoException, SaldoInsuficienteException {
+		this.reintegro(monto);
 		this.agregarAHistorialTransferencias(this, otraCuenta, monto, Transferencia.EGRESO);
 		otraCuenta.recibirTransferencia(this, monto);
 	}
 	
-	public void recibirTransferencia(Cuenta cuenta, double monto) {
+	public void recibirTransferencia(Cuenta cuenta, double monto) throws IngresoNegativoException {
+		this.ingreso(monto);
 		this.agregarAHistorialTransferencias(cuenta, this, monto, Transferencia.INGRESO);
-		this.incremento(monto);
 	}
 	
 	// Métodos PRIVADOS
