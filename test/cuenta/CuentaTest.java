@@ -88,7 +88,7 @@ public class CuentaTest {
 	}
 	
 	@Test
-	public void transferenciaTest() throws IngresoNegativoException, SaldoInsuficienteException {
+	public void transferenciaOKTest() throws IngresoNegativoException, SaldoInsuficienteException {
 		cuenta.transferencia(otraCuenta, 25000.0);
 		
 		assertEquals(175000.0, cuenta.getSaldo(), 0);
