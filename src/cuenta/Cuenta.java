@@ -75,6 +75,7 @@ public class Cuenta {
 	public void ingresarDinero(double monto) throws MontoNegativoExcpetion {
 		this.validarMontoPositivo(monto);
 		this.incrementarSaldo(monto);
+	
 	}	
 
 	public void reintegrarDinero(double monto) throws MontoNegativoExcpetion, SaldoInsuficienteException {
