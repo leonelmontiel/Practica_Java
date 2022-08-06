@@ -80,8 +80,7 @@ public class Cuenta {
 
 	public void reintegrarDinero(double monto) throws MontoNegativoExcpetion, SaldoInsuficienteException {
 		this.validarReintegro(monto);
-		this.decrementarSaldo(monto);
-		
+		this.decrementarSaldo(monto);		
 	}
 
 	public void transferirDinero(Cuenta otraCuenta, double monto) throws MontoNegativoExcpetion, SaldoInsuficienteException {
