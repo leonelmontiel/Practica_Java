@@ -17,31 +17,33 @@ public class Transaccion {
 		return origen;
 	}
 
-	public void setOrigen(Cuenta origen) {
-		this.origen = origen;
-	}
-
 	public Cuenta getDestino() {
 		return destino;
 	}
-
-	public void setDestino(Cuenta destino) {
-		this.destino = destino;
-	}
-
+	
 	public Double getMonto() {
 		return monto;
-	}
-
-	public void setMonto(Double monto) {
-		this.monto = monto;
-	}
+	}	
 
 	public Transferencia getTipoTransferencia() {
 		return tipoTransferencia;
 	}
+	
+	private void setOrigen(Cuenta origen) {
+		this.origen = origen;
+	}
 
-	public void setTipoTransferencia(Transferencia tipoTransferencia) {
+	private void setDestino(Cuenta destino) {
+		this.destino = destino;
+	}
+
+
+	private void setMonto(Double monto) {
+		this.monto = monto;
+	}
+
+
+	private void setTipoTransferencia(Transferencia tipoTransferencia) {
 		this.tipoTransferencia = tipoTransferencia;
 	}
 
