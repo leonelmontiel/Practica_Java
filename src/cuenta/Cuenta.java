@@ -3,6 +3,8 @@ package cuenta;
 import java.util.ArrayList;
 
 public class Cuenta {
+	private static final String SALDO_INSUFICIENTE_REINTEGRO = "El saldo es insuficiente para realizar el reintegro";
+	private static final String MONTO_NEGATIVO = "El monto no puede ser negativo";
 	private String nombre;
 	private Integer nroCuenta;
 	private Double interes;
@@ -70,31 +72,24 @@ public class Cuenta {
 	
 	// Métodos PÚBLICOS
 
-	public void ingreso(double monto) throws IngresoNegativoException {
-		if (monto < 0) {
-			throw new IngresoNegativoException("El monto no puede ser negativo");
-		}
-		this.incremento(monto);
+	public void ingresarDinero(double monto) throws MontoNegativoExcpetion {
+		this.validarMontoPositivo(monto);
+		this.incrementarSaldo(monto);
+	}	
+
+	public void reintegrarDinero(double monto) throws MontoNegativoExcpetion, SaldoInsuficienteException {
+		this.validarReintegro(monto);
+		this.decrementarSaldo(monto);
 	}
 
-	public void reintegro(double monto) throws IngresoNegativoException, SaldoInsuficienteException {
-		if (monto < 0) {
-			throw new IngresoNegativoException("El monto no puede ser negativo");
-		}
-		if (this.getSaldo() < monto) {
-			throw new SaldoInsuficienteException("El saldo es insuficiente para realizar el reintegro");
-		}	
-		this.decremento(monto);
-	}
-
-	public void transferencia(Cuenta otraCuenta, double monto) throws IngresoNegativoException, SaldoInsuficienteException {
-		this.reintegro(monto);
+	public void transferirDinero(Cuenta otraCuenta, double monto) throws MontoNegativoExcpetion, SaldoInsuficienteException {
+		this.reintegrarDinero(monto);
 		this.agregarAHistorialTransferencias(this, otraCuenta, monto, Transferencia.EGRESO);
 		otraCuenta.recibirTransferencia(this, monto);
 	}
 	
-	public void recibirTransferencia(Cuenta cuenta, double monto) throws IngresoNegativoException {
-		this.ingreso(monto);
+	public void recibirTransferencia(Cuenta cuenta, double monto) throws MontoNegativoExcpetion {
+		this.ingresarDinero(monto);
 		this.agregarAHistorialTransferencias(cuenta, this, monto, Transferencia.INGRESO);
 	}
 	
@@ -105,14 +100,27 @@ public class Cuenta {
 		this.getHistorialTransferencias().add(transaccion);
 	}
 
-	private void incremento(Double monto) {
+	private void incrementarSaldo(Double monto) {
 		Double nuevoSaldo = this.getSaldo() + monto;
 		this.setSaldo(nuevoSaldo);
 	}
 	
-	private void decremento(Double monto) {
+	private void decrementarSaldo(Double monto) {
 		Double nuevoSaldo = this.getSaldo() - monto;
 		this.setSaldo(nuevoSaldo);
 	}
+	
+	private void validarMontoPositivo(double monto) throws MontoNegativoExcpetion {
+		if (monto < 0) throw new MontoNegativoExcpetion(MONTO_NEGATIVO);
+	}
+	
+	private void validarSaldoSuficiente(double monto) throws SaldoInsuficienteException {
+		if (this.getSaldo() < monto) throw new SaldoInsuficienteException(SALDO_INSUFICIENTE_REINTEGRO);
+	}
+	
+	private void validarReintegro(double monto) throws MontoNegativoExcpetion, SaldoInsuficienteException {
+		this.validarMontoPositivo(monto);
+		this.validarSaldoSuficiente(monto);
+	}	
 
 }

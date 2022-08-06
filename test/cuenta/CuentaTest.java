@@ -35,16 +35,16 @@ public class CuentaTest {
 	}
 	
 	@Test
-	public void ingresoOK() throws IngresoNegativoException {
-		cuenta.ingreso(25000.0);
+	public void ingresoOK() throws MontoNegativoExcpetion {
+		cuenta.ingresarDinero(25000.0);
 		
 		assertEquals(225000.0, cuenta.getSaldo(), 0);
 	}
 	
 	@Test
 	public void ingresoNoPuedeSerNegativoTest() {
-	    Exception exception = assertThrows(IngresoNegativoException.class, () -> {
-	    	cuenta.ingreso(-25000.0);
+	    Exception exception = assertThrows(MontoNegativoExcpetion.class, () -> {
+	    	cuenta.ingresarDinero(-25000.0);
 	    });
 
 	    String expectedMessage = "El monto no puede ser negativo";
@@ -55,16 +55,16 @@ public class CuentaTest {
 	}
 	
 	@Test
-	public void reintegroOKTest() throws IngresoNegativoException, SaldoInsuficienteException {
-		cuenta.reintegro(25000.0);
+	public void reintegroOKTest() throws MontoNegativoExcpetion, SaldoInsuficienteException {
+		cuenta.reintegrarDinero(25000.0);
 		
 		assertEquals(175000.0, cuenta.getSaldo(), 0);
 	}
 	
 	@Test
-	public void reintegroMontoNegativoTest() throws IngresoNegativoException {
-		Exception exception = assertThrows(IngresoNegativoException.class, () -> {
-	    	cuenta.ingreso(-25000.0);
+	public void reintegroMontoNegativoTest() throws MontoNegativoExcpetion {
+		Exception exception = assertThrows(MontoNegativoExcpetion.class, () -> {
+	    	cuenta.ingresarDinero(-25000.0);
 	    });
 
 	    String expectedMessage = "El monto no puede ser negativo";
@@ -77,7 +77,7 @@ public class CuentaTest {
 	@Test
 	public void reintegroSaldoInsuficienteTest() throws SaldoInsuficienteException {
 		Exception exception = assertThrows(SaldoInsuficienteException.class, () -> {
-	    	cuenta.reintegro(300000.0);
+	    	cuenta.reintegrarDinero(300000.0);
 	    });
 
 	    String expectedMessage = "El saldo es insuficiente para realizar el reintegro";
@@ -88,17 +88,17 @@ public class CuentaTest {
 	}
 	
 	@Test
-	public void transferenciaOKTest() throws IngresoNegativoException, SaldoInsuficienteException {
-		cuenta.transferencia(otraCuenta, 25000.0);
+	public void transferenciaOKTest() throws MontoNegativoExcpetion, SaldoInsuficienteException {
+		cuenta.transferirDinero(otraCuenta, 25000.0);
 		
 		assertEquals(175000.0, cuenta.getSaldo(), 0);
 		assertEquals(25000.0, otraCuenta.getSaldo(), 0);
 	}
 	
 	@Test
-	public void transferenciaFAILTest() throws IngresoNegativoException, SaldoInsuficienteException {
-		Exception exception = assertThrows(IngresoNegativoException.class, () -> {
-			cuenta.transferencia(otraCuenta, -25000.0);
+	public void transferenciaFAILTest() throws MontoNegativoExcpetion {
+		Exception exception = assertThrows(MontoNegativoExcpetion.class, () -> {
+			cuenta.transferirDinero(otraCuenta, -25000.0);
 	    });
 
 	    String expectedMessage = "El monto no puede ser negativo";
