@@ -8,6 +8,14 @@ public class Caja {
 	private List<Producto> productosRegistrados = new ArrayList<Producto>();
 	private List<Producto> productosCobrados = new ArrayList<Producto>();
 	private double dineroAcumulado;
+	private IAbastecedor mercado;
+	
+	public Caja(IAbastecedor mercado) {
+		this.setDineroAcumulado(0);
+		this.setMercado(mercado);
+	}
+	
+	// Getters
 	
 	public List<Producto> getProductosRegistrados() {
 		return this.productosRegistrados;
@@ -20,46 +28,74 @@ public class Caja {
 	public double getDineroAcumulado() {
 		return this.dineroAcumulado;
 	}
+	
+	// Setters
 
 	private void setDineroAcumulado(double monto) {
 		this.dineroAcumulado = monto;
 	}
 	
-	////
+	private void setMercado(IAbastecedor mercado) {
+		this.mercado = mercado;
+	}
+	
+	//// Mensajes de paquete
 
-	public void registrarProducto(Producto producto) {
-		this.getProductosRegistrados().add(producto);		
+	void registrarProducto(Producto producto) {
+		if (this.mercado.hayStockDe(producto)) {
+			this.getProductosRegistrados().add(producto);
+			this.getProductosCobrados().add(producto);
+			this.mercado.decrementarStockDe(producto);
+		}		
 	}
 
-	public void registrarProductos(List<Producto> productos) {
-		this.getProductosRegistrados().addAll(productos);	
+	void registrarProductos(List<Producto> productos) {
+		for (Producto producto : productos) {
+			this.registrarProducto(producto);
+		}
 	}
 		
-	public Boolean productosRegistradosContiene(Producto producto) {
+	Boolean productosRegistradosContiene(Producto producto) {
 		return this.getProductosRegistrados().contains(producto);
 	}
 
-	public Boolean productosRegistradosContiene(List<Producto> productos) {		
+	Boolean productosRegistradosContiene(List<Producto> productos) {		
 		return this.getProductosRegistrados().containsAll(productos);
 	}
 
-	public Boolean productosCobradosContiene(Producto producto) {
+	Boolean productosCobradosContiene(Producto producto) {
 		return this.getProductosCobrados().contains(producto);
 	}
+	
+	boolean productosCobradosContiene(List<Producto> productos) {
+		return this.getProductosCobrados().containsAll(productos);
+	}
 
-	public double calcularMontoTotalAPagar() {
+	double calcularMontoTotalAPagar() {
 		return this.getProductosRegistrados().stream().map(p -> p.getPrecio()).reduce(Double::sum).get();
 	}
+	
+	//// Mensajes ppublicos
 
-	public void cobrar(Producto producto, Cliente cliente) {
-		this.registrarProducto(producto);
+	// Cobrar un producto
+	public void cobrar(Producto arroz, ICliente cliente) {
+		this.registrarProducto(arroz);
 		cliente.recibirMontoAPagar(this.calcularMontoTotalAPagar(), this);
 	}
+	
+	// Cobrar muchos productos
+	public void cobrar(List<Producto> productos, ICliente cliente) {
+		this.registrarProductos(productos);
+		cliente.recibirMontoAPagar(this.calcularMontoTotalAPagar(), this);
+	}	
 
 	public void recibirPago(double montoRecibido) {
 		this.incrementarDineroAcumulado(montoRecibido);
+		//this.informarProductosADecrementarStock(this.getProductosRegistrados();
 		this.vaciarProductosRegistrados();
 	}
+	
+	//// Mensajes privados
 
 	private void vaciarProductosRegistrados() {
 		this.getProductosRegistrados().clear();
@@ -69,5 +105,8 @@ public class Caja {
 		this.setDineroAcumulado(this.getDineroAcumulado() + montoRecibido);
 	}
 
+	public Boolean hayStockDe(Producto producto) {
+		return this.mercado.hayStockDe(producto);
+	}
 
 }
